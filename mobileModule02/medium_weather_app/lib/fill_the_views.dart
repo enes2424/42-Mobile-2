@@ -72,7 +72,7 @@ class FillTheViews {
                 'User-Agent': 'Mozilla/5.0 (compatible; MyFlutterApp/1.0)',
               },
             )
-            .timeout(const Duration(seconds: 1));
+            .timeout(const Duration(seconds: 5));
       } catch (error) {
         return null;
       }
@@ -167,7 +167,7 @@ class FillTheViews {
       try {
         response = await http
             .get(Uri.parse(url))
-            .timeout(const Duration(seconds: 1));
+            .timeout(const Duration(seconds: 5));
       } catch (error) {
         return null;
       }
@@ -238,7 +238,7 @@ class FillTheViews {
       try {
         response = await http
             .get(Uri.parse(url))
-            .timeout(const Duration(seconds: 1));
+            .timeout(const Duration(seconds: 5));
       } catch (error) {
         return null;
       }
@@ -319,7 +319,7 @@ class FillTheViews {
       try {
         response = await http
             .get(Uri.parse(url))
-            .timeout(const Duration(seconds: 1));
+            .timeout(const Duration(seconds: 5));
       } catch (error) {
         return null;
       }

@@ -106,15 +106,23 @@ class _MyHomePageState extends State<MyHomePage>
     controller: _searchController,
     onSubmitted: (_) => _click(),
     onChanged: (value) async {
+      int cursorPosition = _searchController.selection.baseOffset;
       _searchController.text = value.trim();
       for (int i = _searchController.text.length - 2; i >= 0; i--) {
         if (_searchController.text[i] == ',' &&
             _searchController.text[i + 1] != ' ') {
           _searchController.text =
               "${_searchController.text.substring(0, i)}, ${_searchController.text.substring(i + 1)}";
+          cursorPosition++;
           break;
         }
       }
+      _searchController.selection = TextSelection.collapsed(
+        offset:
+            cursorPosition > _searchController.text.length
+                ? _searchController.text.length
+                : cursorPosition,
+      );
       _suggestionsList = await Searcher.getSuggestions(
         context,
         _searchController.text,
