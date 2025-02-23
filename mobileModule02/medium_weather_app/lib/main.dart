@@ -315,7 +315,7 @@ class _MyHomePageState extends State<MyHomePage>
           (_height > 152 && _suggestionsList.isNotEmpty)
               ? _suggestionsTable()
               : _body(),
-      bottomNavigationBar: _height <= 75 ? null : _bottomAppBar(),
+      bottomNavigationBar: _height <= 80 ? null : _bottomAppBar(),
     );
   }
 }
