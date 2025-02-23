@@ -311,11 +311,11 @@ class _MyHomePageState extends State<MyHomePage>
           _accessGPS && _isValidSearch && _accessAPI
               ? Colors.white
               : const Color.fromARGB(255, 234, 234, 247),
-      body:
-          (_height > 152 && _suggestionsList.isNotEmpty)
+      body: _height < 136 + MediaQuery.of(context).padding.top ? null :
+          (_suggestionsList.isNotEmpty)
               ? _suggestionsTable()
               : _body(),
-      bottomNavigationBar: _height <= 80 ? null : _bottomAppBar(),
+      bottomNavigationBar: _height < 80 ? null : _bottomAppBar(),
     );
   }
 }
