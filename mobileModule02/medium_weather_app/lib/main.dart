@@ -172,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage>
 
   Container _suggestionsTable() => Container(
     color: Colors.white,
-    height: _height - 152,
+    height: _height - 136 - MediaQuery.of(context).padding.top,
     child: ListView.builder(
       shrinkWrap: true,
       itemCount: _suggestionsList.length,
