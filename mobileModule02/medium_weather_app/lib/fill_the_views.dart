@@ -42,14 +42,14 @@ class FillTheViews {
 
   static void init(BuildContext context, double? width, Location? location) {
     if (context.mounted) {
-      _locationInfo = getLocationInfo(context, width, location);
+      _locationInfo = _getLocationInfo(context, width, location);
       currentlyViewInfo = _getCurrentlyViewInfo(context, width, location);
       todayViewInfo = _getTodayViewInfo(context, width, location);
       weeklyViewInfo = _getWeeklyViewINfo(context, width, location);
     }
   }
 
-  static Future<List<Widget>?> getLocationInfo(
+  static Future<List<Widget>?> _getLocationInfo(
     BuildContext context,
     double? width,
     Location? location,
