@@ -30,7 +30,6 @@ class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   late TextEditingController _searchController;
   late TabController _tabController;
-  late Future<List<Widget>?> _locationInfo;
   late double _height;
   double? _width;
   List<dynamic> _suggestionsList = [];
@@ -50,11 +49,7 @@ class _MyHomePageState extends State<MyHomePage>
         _isValidSearch = false;
       }
       if (_currentlocation != _location || !_accessAPI) {
-        _locationInfo = FillTheViews.getLocationInfo(
-          context,
-          _width,
-          _location,
-        );
+        FillTheViews.init(context, _width, _location);
         _currentlocation = _location;
       }
     });
@@ -65,7 +60,7 @@ class _MyHomePageState extends State<MyHomePage>
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _searchController = TextEditingController();
-    _locationInfo = FillTheViews.getLocationInfo(context, _width, _location);
+    FillTheViews.init(context, _width, _location);
     _currentLocationOperation();
   }
 
@@ -96,11 +91,7 @@ class _MyHomePageState extends State<MyHomePage>
       }
       if (_currentlocation != _location || !_accessAPI) {
         if (mounted) {
-          _locationInfo = FillTheViews.getLocationInfo(
-            context,
-            _width,
-            _location,
-          );
+          FillTheViews.init(context, _width, _location);
           _currentlocation = _location;
         }
       }
@@ -171,59 +162,58 @@ class _MyHomePageState extends State<MyHomePage>
     ),
   );
 
-  Positioned _suggestionsTable() => Positioned(
-    top: 0,
-    left: 0,
-    right: 0,
-    child: Container(
-      color: Colors.white,
-      height: _height - 152,
-      child: ListView.builder(
-        shrinkWrap: true,
-        itemCount: _suggestionsList.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: LayoutBuilder(
-              builder: (context, constraints) {
-                return SizedBox(
-                  width: double.infinity,
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
-                    child: RichText(
-                      text: Utils.highlightText(
-                        _suggestionsList[index]["location"],
-                        _searchController.text,
-                      ),
+  Container _suggestionsTable() => Container(
+    color: Colors.white,
+    height: _height - 152,
+    child: ListView.builder(
+      shrinkWrap: true,
+      itemCount: _suggestionsList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: LayoutBuilder(
+            builder: (context, constraints) {
+              return SizedBox(
+                width: double.infinity,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: RichText(
+                    text: Utils.highlightText(
+                      _suggestionsList[index]["location"],
+                      _searchController.text,
                     ),
                   ),
-                );
-              },
-            ),
-            onTap: () async {
-              _searchController.text = _suggestionsList[index]["location"];
-              _suggestionsList = await Searcher.getSuggestions(
-                context,
-                _searchController.text,
+                ),
               );
-              if (_suggestionsList.isNotEmpty &&
-                  _suggestionsList[0] is String) {
-                _accessAPI = false;
-                _suggestionsList.clear();
-              } else {
-                _accessAPI = true;
-              }
-              setState(() {});
             },
-          );
-        },
-      ),
+          ),
+          onTap: () async {
+            _searchController.text = _suggestionsList[index]["location"];
+            _suggestionsList = await Searcher.getSuggestions(
+              context,
+              _searchController.text,
+            );
+            if (_suggestionsList.isNotEmpty && _suggestionsList[0] is String) {
+              _accessAPI = false;
+              _suggestionsList.clear();
+            } else {
+              _accessAPI = true;
+            }
+            setState(() {});
+          },
+        );
+      },
     ),
   );
 
-  Widget _page(Future<List<Widget>> function) {
-    return FutureBuilder<List<Widget>>(
-      future: function,
+  Widget _page(Future<List<Widget>?> info) {
+    return FutureBuilder<List<Widget>?>(
+      future: FillTheViews.getTotalInfo(
+        context,
+        _width!,
+        _currentlocation,
+        info,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -274,30 +264,9 @@ class _MyHomePageState extends State<MyHomePage>
                         ? TabBarView(
                           controller: _tabController,
                           children: [
-                            _page(
-                              FillTheViews.currentlyView(
-                                context,
-                                _width!,
-                                _currentlocation,
-                                _locationInfo,
-                              ),
-                            ),
-                            _page(
-                              FillTheViews.todayView(
-                                context,
-                                _width!,
-                                _currentlocation,
-                                _locationInfo,
-                              ),
-                            ),
-                            _page(
-                              FillTheViews.weeklyView(
-                                context,
-                                _width!,
-                                _currentlocation,
-                                _locationInfo,
-                              ),
-                            ),
+                            _page(FillTheViews.currentlyViewInfo),
+                            _page(FillTheViews.todayViewInfo),
+                            _page(FillTheViews.weeklyViewInfo),
                           ],
                         )
                         : Utils.error(
@@ -319,13 +288,6 @@ class _MyHomePageState extends State<MyHomePage>
     ],
   );
 
-  Stack _stack() => Stack(
-    children: [
-      _body(),
-      if (_height > 152 && _suggestionsList.isNotEmpty) _suggestionsTable(),
-    ],
-  );
-
   @override
   Widget build(BuildContext context) {
     _height = MediaQuery.of(context).size.height;
@@ -341,7 +303,10 @@ class _MyHomePageState extends State<MyHomePage>
           _accessGPS && _isValidSearch && _accessAPI
               ? Colors.white
               : const Color.fromARGB(255, 234, 234, 247),
-      body: _stack(),
+      body:
+          (_height > 152 && _suggestionsList.isNotEmpty)
+              ? _suggestionsTable()
+              : _body(),
       bottomNavigationBar: _height <= 75 ? null : _bottomAppBar(),
     );
   }

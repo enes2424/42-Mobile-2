@@ -5,6 +5,10 @@ import 'dart:convert';
 import 'utils.dart';
 
 class FillTheViews {
+  static late Future<List<Widget>?> _locationInfo;
+  static late Future<List<Widget>?> currentlyViewInfo;
+  static late Future<List<Widget>?> todayViewInfo;
+  static late Future<List<Widget>?> weeklyViewInfo;
   static final Map<int, String> _weatherDescriptions = {
     0: 'Clear sky',
     1: 'Mainly clear',
@@ -35,6 +39,15 @@ class FillTheViews {
     96: 'Thunderstorm with slight hail',
     99: 'Thunderstorm with heavy hail',
   };
+
+  static void init(BuildContext context, double? width, Location? location) {
+    if (context.mounted) {
+      _locationInfo = getLocationInfo(context, width, location);
+      currentlyViewInfo = _getCurrentlyViewInfo(context, width, location);
+      todayViewInfo = _getTodayViewInfo(context, width, location);
+      weeklyViewInfo = _getWeeklyViewINfo(context, width, location);
+    }
+  }
 
   static Future<List<Widget>?> getLocationInfo(
     BuildContext context,
@@ -67,11 +80,9 @@ class FillTheViews {
       if (geoResponse.statusCode != 200) {
         return null;
       }
-
       while (width == null) {
         await Future.delayed(Duration(milliseconds: 100));
       }
-
       final geoData = jsonDecode(geoResponse.body);
       if (geoData["address"] == null) {
         return [
@@ -116,18 +127,32 @@ class FillTheViews {
     }
   }
 
-  static Future<List<Widget>> currentlyView(
+  static Future<List<Widget>> getTotalInfo(
     BuildContext context,
     double width,
     Location? location,
-    Future<List<Widget>?> locationInfo,
+    Future<List<Widget>?> weatherInfo,
   ) async {
-    var info = await locationInfo;
+    var info = await _locationInfo;
     if (info == null) {
       return [Text("Error")];
     }
+    List<Widget> totalInfo = [...info];
+    info = await weatherInfo;
+    if (info == null) {
+      return [Text("Error")];
+    }
+    totalInfo.addAll(info);
+    return totalInfo;
+  }
+
+  static Future<List<Widget>?> _getCurrentlyViewInfo(
+    BuildContext context,
+    double? width,
+    Location? location,
+  ) async {
     try {
-      List<Widget> currentlyViewInfo = [...info];
+      List<Widget> currentlyViewInfo = [];
       int ctrl = 0;
       while (location == null) {
         if (ctrl++ == 10) {
@@ -144,12 +169,17 @@ class FillTheViews {
             .get(Uri.parse(url))
             .timeout(const Duration(seconds: 1));
       } catch (error) {
-        return [Text("Error")];
+        return null;
       }
 
       if (response.statusCode != 200) {
-        return [Text("Error")];
+        return null;
       }
+
+      while (width == null) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+
       Map<String, dynamic> weather = json.decode(response.body);
       currentlyViewInfo.add(
         Utils.layoutBuilder(
@@ -187,18 +217,13 @@ class FillTheViews {
     }
   }
 
-  static Future<List<Widget>> todayView(
+  static Future<List<Widget>?> _getTodayViewInfo(
     BuildContext context,
-    double width,
+    double? width,
     Location? location,
-    Future<List<Widget>?> locationInfo,
   ) async {
-    var info = await locationInfo;
-    if (info == null) {
-      return [Text("Error")];
-    }
     try {
-      List<Widget> todayViewInfo = [...info];
+      List<Widget> todayViewInfo = [];
       int ctrl = 0;
       while (location == null) {
         if (ctrl++ == 10) {
@@ -215,12 +240,17 @@ class FillTheViews {
             .get(Uri.parse(url))
             .timeout(const Duration(seconds: 1));
       } catch (error) {
-        return [Text("Error")];
+        return null;
       }
 
       if (response.statusCode != 200) {
-        return [Text("Error")];
+        return null;
       }
+
+      while (width == null) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+
       String hour;
       String temperature;
       String weatherDescription;
@@ -268,18 +298,13 @@ class FillTheViews {
     }
   }
 
-  static Future<List<Widget>> weeklyView(
+  static Future<List<Widget>?> _getWeeklyViewINfo(
     BuildContext context,
-    double width,
+    double? width,
     Location? location,
-    Future<List<Widget>?> locationInfo,
   ) async {
-    var info = await locationInfo;
-    if (info == null) {
-      return [Text("Error")];
-    }
     try {
-      List<Widget> weeklyViewInfo = [...info];
+      List<Widget> weeklyViewInfo = [];
       int ctrl = 0;
       while (location == null) {
         if (ctrl++ == 10) {
@@ -296,12 +321,17 @@ class FillTheViews {
             .get(Uri.parse(url))
             .timeout(const Duration(seconds: 1));
       } catch (error) {
-        return [Text("Error")];
+        return null;
       }
 
       if (response.statusCode != 200) {
-        return [Text("Error")];
+        return null;
       }
+
+      while (width == null) {
+        await Future.delayed(Duration(milliseconds: 100));
+      }
+
       String date;
       String maxTemp;
       String minTemp;
