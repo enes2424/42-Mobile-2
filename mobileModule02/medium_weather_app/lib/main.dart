@@ -237,12 +237,14 @@ class _MyHomePageState extends State<MyHomePage>
         } else if (snapshot.hasData) {
           if (snapshot.data!.isNotEmpty && snapshot.data![0] is Text) {
             _accessAPI = false;
-            return Center(
-              child: Utils.layoutBuilder(
+            return Container(
+              height: double.infinity,
+              width: double.infinity,
+              color: const Color.fromARGB(255, 234, 234, 247),
+              child: Utils.error(
                 _width!,
-                'No data available',
-                40,
-                Colors.red,
+                'The service connection is lost, please check',
+                'your internet connection or try again later',
               ),
             );
           }
@@ -311,8 +313,10 @@ class _MyHomePageState extends State<MyHomePage>
           _accessGPS && _isValidSearch && _accessAPI
               ? Colors.white
               : const Color.fromARGB(255, 234, 234, 247),
-      body: _height < 136 + MediaQuery.of(context).padding.top ? null :
-          (_suggestionsList.isNotEmpty)
+      body:
+          _height < 136 + MediaQuery.of(context).padding.top
+              ? null
+              : (_suggestionsList.isNotEmpty)
               ? _suggestionsTable()
               : _body(),
       bottomNavigationBar: _height < 80 ? null : _bottomAppBar(),

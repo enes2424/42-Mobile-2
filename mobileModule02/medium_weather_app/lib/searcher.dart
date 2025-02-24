@@ -15,8 +15,7 @@ class Searcher {
       final http.Response response;
       try {
         response = await http
-            .get(Uri.parse(geocodingUrl))
-            .timeout(const Duration(seconds: 5));
+            .get(Uri.parse(geocodingUrl));
       } catch (error) {
         return ["Error"];
       }
@@ -117,8 +116,7 @@ class Searcher {
       final http.Response response;
       try {
         response = await http
-            .get(Uri.parse(geocodingUrl))
-            .timeout(const Duration(seconds: 5));
+            .get(Uri.parse(geocodingUrl));
       } catch (error) {
         return Location(-91, -181);
       }

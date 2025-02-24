@@ -65,14 +65,10 @@ class FillTheViews {
 
       final http.Response geoResponse;
       try {
-        geoResponse = await http
-            .get(
-              Uri.parse(geoUrl),
-              headers: {
-                'User-Agent': 'Mozilla/5.0 (compatible; MyFlutterApp/1.0)',
-              },
-            )
-            .timeout(const Duration(seconds: 5));
+        geoResponse = await http.get(
+          Uri.parse(geoUrl),
+          headers: {'User-Agent': 'Mozilla/5.0 (compatible; MyFlutterApp/1.0)'},
+        );
       } catch (error) {
         return null;
       }
@@ -165,9 +161,7 @@ class FillTheViews {
 
       final http.Response response;
       try {
-        response = await http
-            .get(Uri.parse(url))
-            .timeout(const Duration(seconds: 5));
+        response = await http.get(Uri.parse(url));
       } catch (error) {
         return null;
       }
@@ -236,9 +230,7 @@ class FillTheViews {
 
       final http.Response response;
       try {
-        response = await http
-            .get(Uri.parse(url))
-            .timeout(const Duration(seconds: 5));
+        response = await http.get(Uri.parse(url));
       } catch (error) {
         return null;
       }
@@ -317,9 +309,7 @@ class FillTheViews {
 
       final http.Response response;
       try {
-        response = await http
-            .get(Uri.parse(url))
-            .timeout(const Duration(seconds: 5));
+        response = await http.get(Uri.parse(url));
       } catch (error) {
         return null;
       }
