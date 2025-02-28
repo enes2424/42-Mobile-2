@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'fill_the_views.dart';
-import 'where_are_we.dart';
-import 'searcher.dart';
-import 'location.dart';
-import 'utils.dart';
+import 'src/fill_the_views.dart';
+import 'src/location.dart';
+import 'src/searcher.dart';
+import 'src/utils.dart';
+import 'src/where_are_we.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'weather_app', home: MyHomePage());
+    return const MaterialApp(title: 'medium_weather_app', home: MyHomePage());
   }
 }
 
