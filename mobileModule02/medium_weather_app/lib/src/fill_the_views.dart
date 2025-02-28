@@ -112,6 +112,17 @@ class FillTheViews {
         listLocationInfo.add(Utils.layoutBuilder(width, country, 25, null));
       }
 
+      if (listLocationInfo.isEmpty) {
+        return [
+          Utils.layoutBuilder(
+            width,
+            "Unknown location (${location.latitude}, ${location.longitude})",
+            25,
+            null,
+          ),
+        ];
+      }
+
       return listLocationInfo;
     } catch (error) {
       if (context.mounted) {
